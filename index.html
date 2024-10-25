@@ -1,121 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Scratch++ assembly language compiler</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal-like Interface</title>
     <style>
-        textarea {
-            width: 60%;
-            height: 600px;
-            font-size: 18px;
-            padding: 10px;
-            color: black;
-        }
-
-        .rectangle {
-            border: 2px solid white;
+        body {
+            background-color: black;
+            color: green;
+            font-family: monospace;
+            margin: 0;
             padding: 20px;
-            background-color: #02272b;
-            color: black;
-            width: 70%;
+        }
+        #terminal {
+            width: 100%;
+            height: 400px;
+            border: none;
+            overflow-y: auto;
+        }
+        #input-line {
+            display: flex;
+            align-items: center;
+        }
+        #prompt {
+            margin-right: 5px;
+        }
+        #command-input {
+            background: transparent;
+            border: none;
+            color: green;
+            width: 100%;
+            outline: none;
         }
     </style>
 </head>
-<body style="background-color:#000708;">
+<body>
 
-    <h1>SPP compiler</h1>
-
-    <div class="rectangle">
-
-        <p style="color:white">
-        fundamentals:<br>
-        <br>
-        *A reads the address indicated by A.<br>
-        <br>
-        if A was 29, then *a would be the value of register 29.<br>
-        b is just a value that can be read and wrote.<br>
-        c is the result of ADD and SUB, and can only be read.<br>
-        PC is the current instruction.<br>
-        <br>
-        <br>
-        Register allocation:<br>
-        <br>
-        registers 31-46 are dedicated to keys when register 30 is 8.<br>
-        everything else is yours.<br>
-        <br>
-        keys:<br>
-        <br>
-        0123456789 - 31 - 40<br>
-        up arrow - 41<br>
-        down arrow - 42<br>
-        left arrow - 43<br>
-        right arrow - 44<br>
-        space - 45<br>
-        any key - 46<br>
-        <br>
-        INSTRUCTION SET<br>
-        <br>
-        ASM<br>
-        <br>
-        SET (*a, a, or b) (a, b, c, or string/number) // sets variable<br>
-        PRINT (*a a, b, or c) // prints out value in output<br>
-        GO (number) // goes to specific instruction<br>
-        GOIF (number) (*a a, b, or c) (=, >, <) (string/number) //goes to (number) if the inequality is satisfied, add support for var to var, idc enough to add it<br>
-        ADD (*a a, b) (*a a, b or number) // exports to the C variable<br>
-        SUB (*a a, b) (*a a, b or number) // exports to the C variable<br>
-        SWP (swaps a and b)<br>
-        END (ends program)<br>
-        CLEAR (clears output)<br>
-<br>
-            pen:<br>
-<br>
-251, 252: x, y<br>
-253: pen color<br>
-254: pen size<br>
-255: if 8, pen down. else, pen up<br>
-256: if 8, clear all pen<br><br>
-            you can do comments with a double slash, but there has to be a space.<br>
-//invalid<br>
-// valid<br>
-<br>
-MACRO ,(name) // defines macro<br>
-,(name) // executes macro<br>
-ENDMACRO // ends the macro. goes back to where PC was when the macro was ran.<br>
-        </p>
+    <div id="terminal"></div>
+    <div id="input-line">
+        <span id="prompt">$</span>
+        <input type="text" id="command-input" autofocus>
     </div>
-    <br><br>
-    <textarea id="inputField" placeholder="Type here..."></textarea>
-    <br>
-    <button onclick="processInput()">Process Input</button>
-    <button onclick="deprocessInput()">Deprocess Input</button>
-    
+
     <script>
-        function processInput() {
-            var inputField = document.getElementById('inputField');
-            var content = inputField.value;
+        const terminal = document.getElementById('terminal');
+        const commandInput = document.getElementById('command-input');
 
-            // Split the content into lines
-            var lines = content.split('\n');
-
-            // Filter out empty lines and join remaining lines with semicolons
-            var filteredContent = lines.filter(function(line) {
-                return line.trim() !== '';
-            }).join(';');
-
-            inputField.value = filteredContent;
-        }
-
-        function deprocessInput() {
-            var inputField = document.getElementById('inputField');
-            var content = inputField.value;
-
-            // Replace semicolons with new lines
-            var deprocessedContent = content.split(';').join('\n');
-
-            inputField.value = deprocessedContent;
-        }
+        commandInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                const command = commandInput.value.trim();
+                terminal.innerHTML += `<div>$ ${command}</div>`;
+                commandInput.value = '';
+                // Handle commands (just an example)
+                if (command === 'clear') {
+                    terminal.innerHTML = '';
+                } else {
+                    terminal.innerHTML += `<div>Command '${command}' not found</div>`;
+                }
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        });
     </script>
+
 </body>
 </html>
