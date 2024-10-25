@@ -49,7 +49,7 @@
         commandInput.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 const command = commandInput.value.trim();
-                terminal.innerHTML += `<div>$ ${command}</div>`;
+                terminal.innerHTML += `<div>> ${command}</div>`;
                 commandInput.value = '';
                 // Handle commands (just an example)
                 if (command === 'clear') {
