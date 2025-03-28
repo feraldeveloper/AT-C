@@ -29,7 +29,7 @@ let player = {
   img: 'player.png'
 };
 
-// Object to hold all players (populated from Firebase)
+// Object to hold all players (updated from Firebase)
 let players = {};
 
 // Cache for player images
@@ -40,12 +40,11 @@ let localAngle = 0;
 const canvas = document.getElementById('gameCanvas');
 const context = canvas.getContext('2d');
 
-// Write our player data to Firebase
+// Write our player data to Firebase and remove it on disconnect
 database.ref('players/' + playerId).set(player);
-// Remove this player's data on disconnect
 database.ref('players/' + playerId).onDisconnect().remove();
 
-// Listen for changes in all players data
+// Listen for changes in players data
 database.ref('players').on('value', (snapshot) => {
   players = snapshot.val() || {};
 });
@@ -82,7 +81,7 @@ document.addEventListener('keyup', (event) => {
   }
 });
 
-// Utility: Load an image and cache it
+// Utility: load an image and cache it
 function loadPlayerImage(src) {
   if (!playerImages[src]) {
     const img = new Image();
@@ -97,9 +96,46 @@ function gameLoop() {
   // Update local player's rotation
   if (keys.rotateLeft) localAngle -= 5;
   if (keys.rotateRight) localAngle += 5;
-  
+
   // Update local player's position based on key input
   if (keys.up) player.y -= 5;
   if (keys.down) player.y += 5;
- 
+  if (keys.left) player.x -= 5;
+  if (keys.right) player.x += 5;
+  
+  // Set the updated angle
+  player.angle = localAngle;
+  
+  // Write updated local player data to Firebase
+  database.ref('players/' + playerId).set(player);
+
+  // Clear the canvas
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw each player
+  for (let id in players) {
+    const p = players[id];
+    if (playerImages[p.img] && playerImages[p.img].complete) {
+      drawRotatedImage(playerImages[p.img], p.x, p.y, p.angle);
+    } else {
+      // Fallback: draw a simple rectangle
+      context.fillStyle = 'blue';
+      context.fillRect(p.x - 25, p.y - 25, 50, 50);
+    }
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// Utility: draw an image rotated around its center
+function drawRotatedImage(image, x, y, angle) {
+  const rad = angle * Math.PI / 180;
+  context.save();
+  context.translate(x, y);
+  context.rotate(rad);
+  context.drawImage(image, -image.width / 2, -image.height / 2);
+  context.restore();
+}
+
+gameLoop();
 
