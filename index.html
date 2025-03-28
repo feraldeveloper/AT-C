@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  
   <meta charset="UTF-8">
   <title>Multiplayer 2D Game</title>
   <style>
@@ -16,6 +17,14 @@
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database-compat.js"></script>
 </head>
 <body>
+  <button id="flushBtn">Flush Players</button>
+<script>
+  document.getElementById('flushBtn').addEventListener('click', () => {
+    database.ref('players').remove()
+      .then(() => console.log("Players flushed."))
+      .catch((err) => console.error("Error flushing players:", err));
+  });
+</script>
   <canvas id="gameCanvas" width="800" height="600"></canvas>
   <script src="client.js"></script>
 </body>
