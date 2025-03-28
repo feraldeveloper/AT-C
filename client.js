@@ -7,14 +7,7 @@ const firebaseConfig = {
   messagingSenderId: "501080306491",
   appId: "1:501080306491:web:928a6bcc11b1801787bd1e"
 };
-<button id="flushBtn">Flush Players</button>
-<script>
-  document.getElementById('flushBtn').addEventListener('click', () => {
-    database.ref('players').remove()
-      .then(() => console.log("Players flushed."))
-      .catch((err) => console.error("Error flushing players:", err));
-  });
-</script>
+
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
