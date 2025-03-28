@@ -6,7 +6,7 @@
     authDomain: "at-c-b27b4.firebaseapp.com",
 
     projectId: "at-c-b27b4",
-
+    databaseURL: "https://at-c-b27b4-default-rtdb.firebaseio.com",
     storageBucket: "at-c-b27b4.firebasestorage.app",
 
     messagingSenderId: "501080306491",
