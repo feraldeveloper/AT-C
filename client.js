@@ -1,13 +1,12 @@
 const firebaseConfig = {
   apiKey: "AIzaSyB7iEdtr_us1-mJQ1iFhWRCFdy5G5cjals",
   authDomain: "at-c-b27b4.firebaseapp.com",
-  databaseURL: "https://at-c-b27b4-default-rtdb.firebaseio.com",  // <-- Your database URL here
+  databaseURL: "https://at-c-b27b4-default-rtdb.firebaseio.com",  // Your database URL here
   projectId: "at-c-b27b4",
   storageBucket: "at-c-b27b4.firebasestorage.app",
   messagingSenderId: "501080306491",
   appId: "1:501080306491:web:928a6bcc11b1801787bd1e"
 };
-
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
@@ -15,12 +14,13 @@ const database = firebase.database();
 // Generate a unique player ID
 const playerId = Math.random().toString(36).substr(2, 9);
 
-// Local player state
+// Local player state including an initial ping value
 let player = {
   x: 100,
   y: 100,
   angle: 0,
-  img: 'player.png'
+  img: 'player.png',
+  ping: Date.now()
 };
 
 // Object to hold all players (updated from Firebase)
@@ -35,8 +35,25 @@ const canvas = document.getElementById('gameCanvas');
 const context = canvas.getContext('2d');
 
 // Write our player data to Firebase and remove it on disconnect
-database.ref('players/' + playerId).set(player);
-database.ref('players/' + playerId).onDisconnect().remove();
+const playerRef = database.ref('players/' + playerId);
+playerRef.set(player);
+playerRef.onDisconnect().remove();
+
+// Ping mechanism: update the local player's ping every second
+setInterval(() => {
+  player.ping = Date.now();
+  playerRef.update({ ping: player.ping });
+}, 1000);
+
+// Check for inactive players every second. If a player hasn't pinged in over 3 seconds, remove them.
+setInterval(() => {
+  const now = Date.now();
+  for (let id in players) {
+    if (now - players[id].ping > 3000) {
+      database.ref('players/' + id).remove();
+    }
+  }
+}, 1000);
 
 // Listen for changes in players data
 database.ref('players').on('value', (snapshot) => {
@@ -101,7 +118,7 @@ function gameLoop() {
   player.angle = localAngle;
   
   // Write updated local player data to Firebase
-  database.ref('players/' + playerId).set(player);
+  playerRef.set(player);
 
   // Clear the canvas
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -132,4 +149,3 @@ function drawRotatedImage(image, x, y, angle) {
 }
 
 gameLoop();
-
