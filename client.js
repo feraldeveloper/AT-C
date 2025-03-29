@@ -85,10 +85,10 @@ const firebaseConfig = {
   
   document.addEventListener('keyup', (event) => {
     switch (event.code) {
-      case 'ArrowUp': keys.up = false; break;
-      case 'ArrowDown': keys.down = false; break;
-      case 'ArrowLeft': keys.left = false; break;
-      case 'ArrowRight': keys.right = false; break;
+      case 'KeyW': keys.up = false; break;
+      case 'KeyS': keys.down = false; break;
+      case 'KeyA': keys.left = false; break;
+      case 'KeyD': keys.right = false; break;
       case 'KeyQ': keys.rotateLeft = false; break;
       case 'KeyE': keys.rotateRight = false; break;
     }
@@ -117,7 +117,10 @@ const firebaseConfig = {
     if (keys.right) player_velocity_x += 0.1;
     if (player_velocity_x > 5) player_velocity_x = 5;
     if (player_velocity_x < -5) player_velocity_x = -5;
-    
+    if (player_velocity_y > 5) player_velocity_y = 5;
+    if (player_velocity_y < -5) player_velocity_y = -5;
+    player.x += player_velocity_x;
+    player.y += player_velocity_y;
     // Set the updated angle
     player.angle = localAngle;
     
