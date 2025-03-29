@@ -14,7 +14,8 @@ const firebaseConfig = {
   
   // Generate a unique player ID
   const playerId = Math.random().toString(36).substr(2, 9);
-  
+  var player_velocity_x = 0;
+  var player_velocity_y = 0;
   // Local player state including an initial ping value
   let player = {
     x: 100,
@@ -110,10 +111,12 @@ const firebaseConfig = {
     if (keys.rotateRight) localAngle += 1;
   
     // Update local player's position based on key input
-    if (keys.up) player.y -= 1;
-    if (keys.down) player.y += 1;
-    if (keys.left) player.x -= 1;
-    if (keys.right) player.x += 1;
+    if (keys.up) player_velocity_y -= 0.1;
+    if (keys.down) player_velocity_y += 0.1;
+    if (keys.left) player_velocity_x -= 0.1;
+    if (keys.right) player_velocity_x += 0.1;
+    if (player_velocity_x > 5) player_velocity_x = 5;
+    if (player_velocity_x < -5) player_velocity_x = -5;
     
     // Set the updated angle
     player.angle = localAngle;
@@ -137,6 +140,7 @@ const firebaseConfig = {
     }
   
     requestAnimationFrame(gameLoop);
+    setTimeout(gameLoop, 1000 / 60); // 60 FPS
   }
   
   // Utility: draw an image rotated around its center
