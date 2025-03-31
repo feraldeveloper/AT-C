@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <img src="sc2title.gif" alt="star control 2 ripoff rahhhh">
+  <meta charset="UTF-8">
+  <title>Multiplayer 2D Game</title>
+  <style>
+    canvas {
+      background: #000;
+      display: block;
+      margin: 20px auto;
+      border: 1px solid #333;
+    }
+  </style>
+  <!-- Firebase libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <button id="flushBtn">Flush Players</button>
+<script>
+  document.getElementById('flushBtn').addEventListener('click', () => {
+    database.ref('players').remove()
+    database.ref('bullets').remove()
+      .then(() => console.log("Players flushed."))
+      .catch((err) => console.error("Error flushing players:", err));
+  });
+</script>
+  <canvas id="gameCanvas" width="1600" height="1200"></canvas>
+  <script src="client.js"></script>
+</body>
+</html>
